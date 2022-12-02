@@ -40,7 +40,7 @@ public abstract class PBEffectEntityBased extends PBEffectNormal
 
         for (EntityLivingBase entityLivingBase : entities)
         {
-            double dist = entityLivingBase.getDistanceToEntity(entity);
+            double dist = entityLivingBase.getDistance(entity);
             double strength = (range - dist) / range;
 
             if (strength > 0.0)

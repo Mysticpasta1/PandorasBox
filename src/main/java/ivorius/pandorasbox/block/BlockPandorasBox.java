@@ -5,23 +5,25 @@
 
 package ivorius.pandorasbox.block;
 
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,14 +31,14 @@ import javax.annotation.Nullable;
 /**
  * Created by lukas on 15.04.14.
  */
-public class BlockPandorasBox extends BlockContainer
+public class BlockPandorasBox extends Block
 {
-    public static final PropertyDirection FACING_PROP = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+    public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
 
-    public BlockPandorasBox()
+    public BlockPandorasBox(BlockBehaviour.Properties properties)
     {
-        super(Material.WOOD);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING_PROP, EnumFacing.NORTH));
+        super(properties);
+        this.registerDefaultState(this.getStateDefinition().any().setValue(AXIS, Direction.Axis.X));
     }
 
     @Override
@@ -46,35 +48,23 @@ public class BlockPandorasBox extends BlockContainer
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
-    {
-        return new AxisAlignedBB(0.2, 0.0, 0.2, 0.8, 0.6, 0.8);
+    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        return Block.box(0.2, 0.0, 0.2, 0.8, 0.6, 0.8);
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-    {
-        TileEntity tileEntity = worldIn.getTileEntity(pos);
+    public InteractionResult use(BlockState pState, Level worldIn, BlockPos pos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        BlockEntity tileEntity = worldIn.getBlockEntity(pos);
 
         if (tileEntity instanceof TileEntityPandorasBox)
             ((TileEntityPandorasBox) tileEntity).spawnPandorasBox();
 
-        worldIn.setBlockToAir(pos);
+        worldIn.removeBlock(pos,false);
 
-        return true;
+        return super.use(pState, worldIn, pos, pPlayer, pHand, pHit);
     }
 
-    @Override
-    public boolean isOpaqueCube(IBlockState state)
-    {
-        return false;
-    }
 
-    @Override
-    public boolean isFullCube(IBlockState state)
-    {
-        return false;
-    }
 
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state)
@@ -95,7 +85,7 @@ public class BlockPandorasBox extends BlockContainer
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        return this.getDefaultState().withProperty(FACING_PROP, EnumFacing.getHorizontal(meta & 7));
+        return this.getDefaultState().withProperty(FACING_PROP, EnumFacing.byHorizontalIndex(meta & 7));
     }
 
     @Override

@@ -1,6 +1,5 @@
 package ivorius.pandorasbox.client.rendering.effects;
 
-import ivorius.ivtoolkit.rendering.IvRenderHelper;
 import ivorius.pandorasbox.effects.PBEffectExplode;
 import ivorius.pandorasbox.entitites.EntityPandorasBox;
 import net.minecraft.client.renderer.*;

@@ -224,7 +224,7 @@ public class PBEffectSpawnEntityIDList extends PBEffectSpawnEntities
                 if (nearest != null)
                 {
                     wolf.setTamed(true);
-                    wolf.getNavigator().clearPathEntity();
+                    wolf.getNavigator().clearPath();
                     wolf.setAttackTarget(null);
                     wolf.setOwnerId(nearest.getUniqueID());
                     wolf.world.setEntityState(wolf, (byte) 7);

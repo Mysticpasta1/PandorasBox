@@ -17,9 +17,9 @@ public class PBLoot
 {
     public static void injectLoot(LootTable table, ResourceLocation location)
     {
-        if (location.getResourceDomain().equals("minecraft"))
+        if (location.getNamespace().equals("minecraft"))
         {
-            String path = location.getResourcePath();
+            String path = location.getPath();
 
             maybeInject(table, path, "chests/jungle_temple", "pool1", 5);
             maybeInject(table, path, "chests/abandoned_mineshaft", "main", 5);

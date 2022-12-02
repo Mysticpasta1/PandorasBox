@@ -4,3 +4,5 @@ tile.pandorasBox.name=Pandora's Box
 pandorasbox.configgui.title=Pandora's Box
 pandorasbox.configgui.ctgy.balancing=Balancing
 pandorasbox.configgui.ctgy.balancing.tooltip=Settings affecting the balance of the mod
+commands.pandora.usage.noArgs=You need arguments for this command!
+commands.pandora.usage.notPlayer=The target is not a player!

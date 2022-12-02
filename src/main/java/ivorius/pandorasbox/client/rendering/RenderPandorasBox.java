@@ -5,110 +5,47 @@
 
 package ivorius.pandorasbox.client.rendering;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import ivorius.pandorasbox.PandorasBox;
 import ivorius.pandorasbox.client.rendering.effects.PBEffectRenderer;
 import ivorius.pandorasbox.client.rendering.effects.PBEffectRenderingRegistry;
 import ivorius.pandorasbox.effects.PBEffect;
 import ivorius.pandorasbox.entitites.EntityPandorasBox;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.model.TridentModel;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.client.model.Attributes;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.b3d.B3DLoader;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.projectile.ThrownTrident;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
 
 /**
  * Created by lukas on 30.03.14.
  */
-@SideOnly(Side.CLIENT)
-public class RenderPandorasBox extends Render
+@OnlyIn(Dist.CLIENT)
+public class RenderPandorasBox extends EntityRenderer<EntityPandorasBox>
 {
-    public ModelBase model;
-    public ResourceLocation texture;
+    public static final ResourceLocation TRIDENT_LOCATION = new ResourceLocation("textures/entity/pandoras_box.png");
+    private final ModelPandorasBox model;
 
-//    public ResourceLocation model;
-
-    public RenderPandorasBox(RenderManager renderManager)
-    {
-        super(renderManager);
-
-        model = new ModelPandorasBox();
-        texture = new ResourceLocation(PandorasBox.MOD_ID, "textures/entity/pandoras_box.png");
-
-//        model = new ResourceLocation(PandorasBox.MOD_ID, "block/pandoras_box.b3d");
+    public RenderPandorasBox(EntityRendererProvider.Context pContext) {
+        super(pContext);
+        this.model = new ModelPandorasBox(pContext.bakeLayer(ModelPandorasBox.LAYER_LOCATION));
     }
 
-    public static void renderB3DModel(TextureManager textureManager, ResourceLocation modelLoc, IBlockState blockState, int animationCounter)
-    {
-        IModel model = null;
-        try
-        {
-            model = ModelLoaderRegistry.getModel(modelLoc);
-            B3DLoader.B3DState defaultState = (B3DLoader.B3DState) model.getDefaultState();
-            B3DLoader.B3DState newState = new B3DLoader.B3DState(defaultState.getAnimation(), animationCounter);
-            renderBlockModel(textureManager, model, blockState, newState);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public static void renderBlockModel(TextureManager textureManager, IModel model, IBlockState blockState, IModelState state)
-    {
-        if (state == null)
-            state = model.getDefaultState();
-
-        // Temporary fix for some models having alpha=0
-        GlStateManager.disableBlend();
-        GlStateManager.disableAlpha();
-
-        final TextureMap textureMapBlocks = Minecraft.getMinecraft().getTextureMapBlocks();
-
-        VertexFormat vFormat = Attributes.DEFAULT_BAKED_FORMAT;
-        IBakedModel bakedModel = model.bake(state, vFormat, input -> input == null ? textureMapBlocks.getMissingSprite() : textureMapBlocks.getAtlasSprite(input.toString()));
-        textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-0.5f, 0.0f, -0.5f);
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder worldRenderer = tessellator.getBuffer();
-        worldRenderer.begin(GL11.GL_QUADS, vFormat);
-//        worldRenderer.markDirty(); // Still required?
-
-        for (BakedQuad quad : bakedModel.getQuads(blockState, null, 4206942))
-            worldRenderer.addVertexData(quad.getVertexData());
-        for (EnumFacing facing : EnumFacing.values())
-            for (BakedQuad quad : bakedModel.getQuads(blockState, facing, 4206942))
-                worldRenderer.addVertexData(quad.getVertexData());
-
-        tessellator.draw();
-
-        GlStateManager.popMatrix();
-
-        GlStateManager.enableAlpha(); // End temporary fix
+    @Override
+    public ResourceLocation getTextureLocation(EntityPandorasBox pEntity) {
+        return TRIDENT_LOCATION;
     }
 
     @Override
@@ -149,10 +86,14 @@ public class RenderPandorasBox extends Render
 
         super.doRender(entity, x, y, z, yaw, partialTicks);
     }
-
     @Override
-    protected ResourceLocation getEntityTexture(Entity var1)
-    {
-        return texture;
+    public void render(EntityPandorasBox pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight) {
+        pMatrixStack.pushPose();
+        pMatrixStack.translate(x, y + MathHelper.sin((entity.ticksExisted + partialTicks) * 0.04f) * 0.05, z);
+        pMatrixStack.rotate(-yaw, 0.0F, 1.0F, 0.0F);
+        VertexConsumer vertexconsumer = ItemRenderer.getFoilBufferDirect(pBuffer, this.model.renderType(this.getTextureLocation(pEntity)), false, pEntity.isFoil());
+        this.model.renderToBuffer(pMatrixStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        pMatrixStack.popPose();
+        super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
     }
 }

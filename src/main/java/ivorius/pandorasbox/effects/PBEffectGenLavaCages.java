@@ -5,7 +5,6 @@
 
 package ivorius.pandorasbox.effects;
 
-import ivorius.ivtoolkit.blocks.BlockPositions;
 import ivorius.pandorasbox.entitites.EntityPandorasBox;
 import ivorius.pandorasbox.utils.PBNBTHelper;
 import net.minecraft.block.Block;

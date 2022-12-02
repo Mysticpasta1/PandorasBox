@@ -5,6 +5,7 @@
 
 package ivorius.pandorasbox.entitites;
 
+import com.mojang.math.Vector3d;
 import io.netty.buffer.ByteBuf;
 import ivorius.pandorasbox.PBConfig;
 import ivorius.pandorasbox.PandorasBox;
@@ -14,21 +15,10 @@ import ivorius.pandorasbox.effects.PBEffectRegistry;
 import ivorius.pandorasbox.mods.Psychedelicraft;
 import ivorius.pandorasbox.network.PacketEntityData;
 import ivorius.pandorasbox.network.PartialUpdateHandler;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.MoverType;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 
 import java.util.List;
 import java.util.Random;
@@ -53,21 +43,18 @@ public class EntityPandorasBox extends Entity implements IEntityAdditionalSpawnD
 
     protected float scaleInProgress = 1.0f;
 
-    protected Vec3d effectCenter = new Vec3d(0, 0, 0);
+    protected Vector3d effectCenter = new Vector3d(0, 0, 0);
 
-    public EntityPandorasBox(World world)
+    public EntityPandorasBox(EntityType<EntityPandorasBox> entityPandorasBoxEntityType, Level world, PBEffect effect)
     {
-        super(world);
-
-        setSize(0.6f, 0.4f);
-    }
-
-    public EntityPandorasBox(World world, PBEffect effect)
-    {
-        this(world);
+        this(entityPandorasBoxEntityType,world);
 
         setBoxEffect(effect);
         timeBoxWaiting = 40;
+    }
+
+    public EntityPandorasBox(EntityType<EntityPandorasBox> entityPandorasBoxEntityType, Level level) {
+        super(entityPandorasBoxEntityType,level);
     }
 
     public int getTimeBoxWaiting()
@@ -120,14 +107,14 @@ public class EntityPandorasBox extends Entity implements IEntityAdditionalSpawnD
         this.floatAwayProgress = floatAwayProgress;
     }
 
-    public Vec3d getEffectCenter()
+    public Vector3d getEffectCenter()
     {
         return effectCenter;
     }
 
     public void setEffectCenter(double x, double y, double z)
     {
-        this.effectCenter = new Vec3d(x, y, z);
+        this.effectCenter = new Vector3d(x, y, z);
     }
 
     public float getCurrentScale()
@@ -304,7 +291,7 @@ public class EntityPandorasBox extends Entity implements IEntityAdditionalSpawnD
                         List<EntityLivingBase> nearbyEntities = world.getEntitiesWithinAABB(EntityLivingBase.class, getEntityBoundingBox().expand(powerRange, powerRange, powerRange));
                         for (EntityLivingBase entity : nearbyEntities)
                         {
-                            float entityDist = (float) entity.getDistanceSqToEntity(this);
+                            float entityDist = (float) entity.getDistanceSq(this);
                             if (entityDist < powerRange)
                                 Psychedelicraft.addDrugValue(entity, "Power", powerStrength * (powerRange - entityDist));
                         }

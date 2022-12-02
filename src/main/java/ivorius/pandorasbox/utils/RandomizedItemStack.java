@@ -1,6 +1,6 @@
 package ivorius.pandorasbox.utils;
 
-import ivorius.ivtoolkit.random.WeightedSelector;
+import ivorius.pandorasbox.WeightedSelector;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 

@@ -5,9 +5,8 @@
 
 package ivorius.pandorasbox.weighted;
 
-import ivorius.ivtoolkit.random.WeightedSelector;
+import ivorius.pandorasbox.WeightedSelector;
 import net.minecraft.potion.Potion;
-import net.minecraft.util.WeightedRandom;
 
 /**
  * Created by lukas on 31.03.14.

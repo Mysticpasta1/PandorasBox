@@ -7,39 +7,34 @@ package ivorius.pandorasbox.items;
 
 import ivorius.pandorasbox.effectcreators.PBECRegistry;
 import ivorius.pandorasbox.entitites.EntityPandorasBox;
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 
-public class ItemPandorasBox extends ItemBlock
+public class ItemPandorasBox extends BlockItem
 {
-    public ItemPandorasBox(Block block)
+    public ItemPandorasBox(Block block, Item.Properties properties)
     {
-        super(block);
-
-        setMaxStackSize(1);
+        super(block, properties);
     }
-
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
-    {
-        ItemStack itemStackIn = playerIn.getHeldItem(handIn);
+    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
+        ItemStack itemStackIn = pPlayer.getItemInHand(pUsedHand);
 
-        if (!worldIn.isRemote)
-            executeRandomEffect(worldIn, playerIn);
+        executeRandomEffect(pLevel, pPlayer);
 
         itemStackIn.shrink(1);
-        return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+        return super.use(pLevel, pPlayer, pUsedHand);
     }
 
-    public static EntityPandorasBox executeRandomEffect(World world, EntityLivingBase entity)
+    public static EntityPandorasBox executeRandomEffect(Level world, LivingEntity entity)
     {
-        return PBECRegistry.spawnPandorasBox(world, entity.getRNG(), true, entity);
+        return PBECRegistry.spawnPandorasBox(world, entity.getRandom(), true, entity);
     }
 }

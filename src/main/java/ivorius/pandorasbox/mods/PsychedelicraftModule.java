@@ -2,6 +2,7 @@ package ivorius.pandorasbox.mods;
 
 import ivorius.pandorasbox.PandorasBox;
 import ivorius.pandorasbox.PandorasBoxHelper;
+import ivorius.pandorasbox.WeightedSelector;
 import ivorius.pandorasbox.effectcreators.PBECDrugEntities;
 import ivorius.pandorasbox.effectcreators.PBECRegistry;
 import ivorius.pandorasbox.effects.PBEffectEntitiesDrug;
@@ -9,10 +10,6 @@ import ivorius.pandorasbox.effects.PBEffectRegistry;
 import ivorius.pandorasbox.random.DLinear;
 import ivorius.pandorasbox.random.ILinear;
 import ivorius.pandorasbox.random.IWeighted;
-import ivorius.ivtoolkit.random.WeightedSelector;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
 
 import java.util.ArrayList;
 import java.util.List;

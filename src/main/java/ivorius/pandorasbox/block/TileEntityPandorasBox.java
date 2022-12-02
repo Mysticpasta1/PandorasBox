@@ -8,19 +8,14 @@ package ivorius.pandorasbox.block;
 import ivorius.pandorasbox.effectcreators.PBECRegistry;
 import ivorius.pandorasbox.effects.PBEffect;
 import ivorius.pandorasbox.entitites.EntityPandorasBox;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 
 /**
  * Created by lukas on 15.04.14.
  */
-public class TileEntityPandorasBox extends TileEntity
+public class TileEntityPandorasBox extends BlockEntity
 {
     private float partialRotationYaw;
 

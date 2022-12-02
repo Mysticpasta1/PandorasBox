@@ -9,7 +9,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import ivorius.pandorasbox.block.PBBlocks;
 import ivorius.pandorasbox.utils.RandomizedItemStack;
-import ivorius.ivtoolkit.random.WeightedSelector;
 import ivorius.pandorasbox.weighted.WeightedBlock;
 import ivorius.pandorasbox.weighted.WeightedEntity;
 import ivorius.pandorasbox.weighted.WeightedPotion;

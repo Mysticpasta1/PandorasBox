@@ -21,7 +21,16 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -37,26 +46,16 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.Logger;
 
 import static ivorius.pandorasbox.crafting.OreDictionaryConstants.*;
 
-@Mod(modid = PandorasBox.MOD_ID, version = PandorasBox.VERSION, name = PandorasBox.NAME, guiFactory = "ivorius.pandorasbox.gui.PBConfigGuiFactory",
-        dependencies = "required-after:ivtoolkit")
+@Mod("pandorasbox")
 public class PandorasBox
 {
-    public static final String NAME = "Pandora's Box";
     public static final String MOD_ID = "pandorasbox";
-    public static final String VERSION = "2.1.6.2-1.12";
-
-    @Instance(value = MOD_ID)
-    public static PandorasBox instance;
-
-    @SidedProxy(clientSide = "ivorius.pandorasbox.client.ClientProxy", serverSide = "ivorius.pandorasbox.server.ServerProxy")
     public static PBProxy proxy;
-
-    public static String filePathTexturesFull = "pandorasbox:textures/mod/";
-    public static String filePathTextures = "textures/mod/";
     public static String basePath = "pandorasbox:";
 
     public static Logger logger;
@@ -66,13 +65,10 @@ public class PandorasBox
 
     public static PBEventHandler fmlEventHandler;
 
-    public static void register(Block block, String id, ItemBlock item)
+    public static void register(Block block, ResourceLocation id, BlockItem item)
     {
-        block.setRegistryName(id);
-        item.setRegistryName(id);
-
-        ForgeRegistries.BLOCKS.register(block);
-        ForgeRegistries.ITEMS.register(item);
+        ForgeRegistries.BLOCKS.register(id, block);
+        ForgeRegistries.ITEMS.register(id, item);
     }
 
     @EventHandler
@@ -88,9 +84,10 @@ public class PandorasBox
         fmlEventHandler = new PBEventHandler();
         fmlEventHandler.register();
 
-        PBBlocks.pandorasBox = (BlockPandorasBox) new BlockPandorasBox().setUnlocalizedName("pandorasBox").setHardness(0.5f).setCreativeTab(CreativeTabs.MISC);
-        register(PBBlocks.pandorasBox, "pandorasBox", new ItemPandorasBox(PBBlocks.pandorasBox));
-        GameRegistry.registerTileEntity(TileEntityPandorasBox.class, "pandorasBox");
+        PBBlocks.pandorasBox = new BlockPandorasBox(BlockBehaviour.Properties.of(Material.WOOD).strength(0.5f));
+        register(PBBlocks.pandorasBox, new ResourceLocation(PandorasBox.MOD_ID, "pandorasBox"), new ItemPandorasBox(PBBlocks.pandorasBox, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+        ForgeRegistries.ENTITY_TYPES.register(new ResourceLocation(PandorasBox.MOD_ID, "pandoras_box"), EntityType.Builder.<EntityPandorasBox>of(EntityPandorasBox::new, MobCategory.MISC).sized(0.6F, 0.4F).clientTrackingRange(16).updateInterval(Integer.MAX_VALUE).build("pandoras_box"));
+        GameRegistry.registerTileEntity(TileEntityPandorasBox.class, new ResourceLocation(PandorasBox.MOD_ID, "pandorasBox"));
 
         EntityRegistry.registerModEntity(new ResourceLocation(PandorasBox.MOD_ID, "pandorasBox"), EntityPandorasBox.class, "pandorasBox", PBEntityList.pandorasBoxEntityID, this, 256, 20, true);
 
