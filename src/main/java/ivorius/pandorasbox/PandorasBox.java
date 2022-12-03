@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -52,6 +53,7 @@ import org.apache.logging.log4j.Logger;
 import static ivorius.pandorasbox.crafting.OreDictionaryConstants.*;
 
 @Mod("pandorasbox")
+@Mod.EventBusSubscriber(value = "pandorasbox", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PandorasBox
 {
     public static final String MOD_ID = "pandorasbox";
